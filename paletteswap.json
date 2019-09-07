@@ -1,0 +1,12 @@
+{
+	"script": "scripts/paletteswap.hx",
+	"folders": [
+		{"in": "input", "out": "output"}
+	]
+	"fileIn": "(test_.+)\.png",
+	"fileOut": "$1_swapped.png",
+	"paletteMap": [
+		{"in": 0xffff0000, "out": 0xff0000ff},
+		{"in": 0xff0000ff, "out": 0xffff0000}
+	]
+}
