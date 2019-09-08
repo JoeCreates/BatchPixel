@@ -13,6 +13,7 @@ import openfl.display.Sprite;
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
+import haxe.io.Bytes;
 
 /**
  * ...
@@ -44,14 +45,16 @@ class Main {
 	public static function main() {
 		var args = Sys.args();
 		
+		Sys.println("Running batch pixel...");
+		
 		// Load config from command line args
 		if (args.length == 0) {
 			Sys.println("Please specify path to config json");
 		} else {
 			configPath = args[0];
-			configFolder = Path.directory(configPath);
 			var configStr = "";
 			try {
+				configFolder = Path.directory(configPath);
 				configStr = File.getContent(configPath);
 			} catch (e:String) {
 				Sys.println("Cannot read config file: " + configPath);
@@ -71,6 +74,8 @@ class Main {
 			}
 		}
 		
+		Sys.println(config.paletteMap);
+		
 		// Load hscript from config
 		var parser:Parser = new Parser();
 		interp = new Interp();
@@ -83,7 +88,7 @@ class Main {
 		interp.variables.set("println", Sys.println);
 		interp.variables.set("Reflect", Reflect);
 		interp.variables.set("toUInt", function(x){var u:UInt = cast x; return u; });
-		var ast = parser.parseString(File.getContent("scripts/" + config.script));
+		var ast = parser.parseString(File.getContent(config.script));
 		
 		interp.execute(ast);
 		
@@ -97,8 +102,10 @@ class Main {
 		
 		// Call script process on files
 		var folders:Array<Dynamic> = config.folders;
+		Sys.println(folders);
+		
 		for (folder in folders) {
-			processFolder(configFolder + "/" + folder.input, configFolder + "/" + folder.output, process);
+			processFolder(Reflect.field(folder, "in"), folder.out, process);
 		}
 		
 		// Call script complete
@@ -245,7 +252,12 @@ class Main {
 				var newFile = newFolder + "/" + fileInReg.replace(file, fileOut);
 				
 				if (!copiedFolder) {
-					FileSystem.createDirectory(newFolder);
+					try {
+						FileSystem.createDirectory(newFolder);
+					} catch (e:String) {
+						Sys.println("Cannot create directory: " + newFolder);
+						Sys.exit(-1);
+					}
 					copiedFolder = true;
 				}
 				var bmp = process(BitmapData.fromFile(filePath), config);
@@ -260,9 +272,15 @@ class Main {
 	
 	static function saveBitmap(image:BitmapData, file:String):Void {
 		Sys.println("Saving " + file);
-		var b:ByteArray = image.encode(image.rect, new PNGEncoderOptions());
+		var byteArray:ByteArray = image.encode(image.rect, new PNGEncoderOptions());
+		byteArray.position = 0;
+		var bytes:Bytes = Bytes.alloc(byteArray.length);
+		while (byteArray.bytesAvailable > 0) {
+			var position = byteArray.position;
+			bytes.set(position, byteArray.readByte());
+		}
 		var fo:FileOutput = sys.io.File.write(file, true);
-		fo.writeString(b.toString());
+		fo.write(bytes);
 		fo.close();
 	}
 

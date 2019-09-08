@@ -6,7 +6,8 @@
 	<meta title="BatchPixel" package="BatchPixel" version="1.0.0" company="Joe Williamson" />
 	
 	<!-- output -->
-	<app main="Main" file="BatchPixel" path="bin" />
+	<app main="Main" file="BatchPixel" />
+	<set name="BUILD_DIR" value="export" />
 	
 	<!--<window background="#000000" fps="60" />-->
 	<!--<window width="800" height="480" unless="mobile" />-->

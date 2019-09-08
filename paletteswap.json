@@ -1,12 +1,13 @@
 {
 	"script": "scripts/paletteswap.hx",
 	"folders": [
-		{"in": "input", "out": "output"}
+		{"in": "C:\Users\Joe\Documents\jack-move\Assets\Jack Move\PrefabsAndData\Battle\Enemies\Scrapyard\CyberDog\Images", "out": "C:\Users\Joe\Documents\jack-move\Assets\Jack Move\PrefabsAndData\Battle\Enemies\Scrapyard\CyberDog\Images\swaps"}
 	]
-	"fileIn": "(test_.+)\.png",
-	"fileOut": "$1_swapped.png",
+	"fileIn": "dog_(.+)\.png",
+	"fileOut": "dog_green_$1_.png",
 	"paletteMap": [
-		{"in": 0xffff0000, "out": 0xff0000ff},
-		{"in": 0xff0000ff, "out": 0xffff0000}
+		{"in": 0xff00c8f8, "out": 0xff88b800},
+		{"in": 0xff0070c0, "out": 0xff2f8d51},
+		{"in": 0xff202c80, "out": 0xff0f5836}
 	]
 }
